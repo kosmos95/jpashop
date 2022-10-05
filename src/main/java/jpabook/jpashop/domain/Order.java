@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Table(name="orders")
 @Getter @Setter
@@ -18,14 +20,14 @@ public class Order {
     private Long id;
 
 
-    @ManyToOne //멤버와 다대일 관계
+    @ManyToOne(fetch = LAZY) //멤버와 다대일 관계
     @JoinColumn(name = "member_id")//member_id가 외래키가 된다
     private Member member;
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "delivery_id") // delivery_id를 외래키로 해서 사용
     private Delivery delivery;
 
