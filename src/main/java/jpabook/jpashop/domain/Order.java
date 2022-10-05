@@ -24,10 +24,10 @@ public class Order {
     @JoinColumn(name = "member_id")//member_id가 외래키가 된다
     private Member member;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)// persist를 전파한다.
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_id") // delivery_id를 외래키로 해서 사용
     private Delivery delivery;
 
