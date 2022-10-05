@@ -35,6 +35,11 @@ public class Category {
     @OneToMany(mappedBy ="parent") //자식
     private List<Category> child = new ArrayList<>();
 
+    //==연관관계 메서드== 값을 넣으면 양쪽 모두에 들어가야함//
+    public void addChildCategory(Category child) {
+        this.child.add(child);
+        child.setParent(this);
+    }
 }
 
 
