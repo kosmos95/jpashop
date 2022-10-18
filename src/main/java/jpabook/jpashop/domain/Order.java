@@ -31,7 +31,7 @@ public class Order {
     @JoinColumn(name = "delivery_id") // delivery_id를 외래키로 해서 사용
     private Delivery delivery;
 
-    private LocalDateTime Date; //LocalDateTime : 자바 1.8에서 동작 자동으로 날짜 잡음
+    private LocalDateTime orderDate; //LocalDateTime : 자바 1.8에서 동작 자동으로 날짜 잡음
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status ; //주문상태 [ORDER, CANCEL]
@@ -50,5 +50,40 @@ public class Order {
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
         delivery.setOrder(this);
+    }
+
+    //==생성 매서드//
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {  //...문법으로 여러개를 넘길 수 있다. Order타입의 createOrder메서드
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    //==비즈니스 로직==//
+    public void cancel() {
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송된 상품은 취소가 불가능합니다.");
+        }
+
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        }
+    }
+
+    //==조회 로직==//
+    /** 전체 주문가격 조회 **/
+    public int getTotalPrice() {
+        int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
     }
 }
